@@ -1,4 +1,8 @@
-# What this project is
+# Boilerplate for PHP extensions
+
+A starter folder that turns your PHP code into a small add-on file you can load and ship.
+
+## What this project is
 
 This project is a starter kit. It turns ordinary PHP code into a small native add-on file that PHP can load.
 
