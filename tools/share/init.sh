@@ -9,9 +9,13 @@ cd "$ROOT"
 if [ "${1:-}" != "" ]; then
     NAME=$1
 else
-    printf "Extension name [core_extension]: "
+    printf "Project name (required): "
     read -r NAME
-    [ -n "$NAME" ] || NAME=core_extension
+fi
+
+if [ -z "$NAME" ]; then
+    echo "A name is required. Example: shop_ext" >&2
+    exit 1
 fi
 
 case "$NAME" in
