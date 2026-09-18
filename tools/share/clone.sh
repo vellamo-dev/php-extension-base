@@ -6,8 +6,11 @@ REPO_TAR="https://github.com/vellamo-dev/php-extension-base/archive/refs/heads/m
 if [ "${1:-}" != "" ]; then
     NAME=$1
 else
-    printf "Project name (required): "
-    read -r NAME
+    echo "Type a short project name and press Enter."
+    echo "Example: shop_ext"
+    echo "Letters, numbers and underscore only."
+    printf "Project name: "
+    read -r NAME < /dev/tty
 fi
 
 if [ -z "$NAME" ]; then
