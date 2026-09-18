@@ -1,0 +1,13 @@
+name: core_extension
+mode: ext
+php-version: "8.4"
+optimize: 2
+job: 4
+build-dir: target/tpc
+cxx-std: c++17
+
+sources:
+  - src/main
+
+ignore:
+  - src/tests

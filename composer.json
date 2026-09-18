@@ -1,0 +1,9 @@
+{
+    "name": "local/php-extension-base",
+    "require-dev": {
+        "swoole/typephp": "^0.8.2"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

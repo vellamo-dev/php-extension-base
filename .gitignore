@@ -1,0 +1,31 @@
+# machine
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# PHP / Composer
+vendor/
+composer.phar
+composer.lock
+
+# local PHP pick (absolute paths on your Mac)
+project-php-mac.conf
+
+# build output and compiler cache
+target/
+*.so
+*.so.rsp
+*.dylib
+*.o
+*.a
+
+# test leftovers
+*.err
+*.out
+load.phpinfo
+
+# Apple container / OS
+.container/
+Thumbs.db
