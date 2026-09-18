@@ -15,6 +15,48 @@ You do not need to understand compilers. You need a Mac, a few install steps, an
 
 ---
 
+## Get a copy
+
+This kit lives at https://github.com/vellamo-dev/php-extension-base
+
+### Fastest
+
+In Terminal, in the folder where you want the new project:
+
+```shell
+curl -fsSL https://raw.githubusercontent.com/vellamo-dev/php-extension-base/main/tools/share/clone.sh | bash
+```
+
+It will not continue without a name. It downloads the files (not the Git history), creates a folder with that exact name, and runs the first setup. Then:
+
+```shell
+cd shop_ext
+```
+
+Open `readme.md` in that folder and follow the steps for your computer.
+
+You can pass the name on the same line:
+
+```shell
+curl -fsSL https://raw.githubusercontent.com/vellamo-dev/php-extension-base/main/tools/share/clone.sh | bash -s shop_ext
+```
+
+### Detailed
+
+Pick a name first. Letters, numbers and underscore only. No default folder name.
+
+```shell
+NAME=shop_ext
+curl -L https://github.com/vellamo-dev/php-extension-base/archive/refs/heads/main.tar.gz | tar xz
+mv php-extension-base-main "$NAME"
+cd "$NAME"
+bash tools/share/init.sh "$NAME"
+```
+
+GitHub unpacks into `php-extension-base-main` only as a temporary name. You rename that folder to your name before you continue. `init.sh` also requires the name; it will not use `core_extension` by itself.
+
+---
+
 ## What you get after a build
 
 On a Mac:
@@ -67,7 +109,7 @@ If PHP is missing, it offers to install it with Homebrew. If Homebrew is missing
 This downloads TypePHP and builds its helper library for the PHP you picked.
 If you later pick a different PHP, run:
 
-```shellell
+```shell
 ./tools/share/rebuild-phpx.sh
 ```
 
@@ -77,7 +119,7 @@ If you later pick a different PHP, run:
 
 **Step 3 — build**
 
-```shellell
+```shell
 ./tools/build/targets/macos/build.sh
 ```
 
@@ -85,7 +127,7 @@ This compiles everything under `src/main` into the Mac add-on.
 
 **Step 4 — check that PHP can load it**
 
-```shellell
+```shell
 ./tools/test/targets/macos/test-load.sh
 ```
 
@@ -152,8 +194,8 @@ Not planned. If you need Windows, you would add your own scripts under `tools/bu
 
 ## How to start your own product from this kit
 
-1. Copy this whole folder.
-2. Open `project.yml` and change `name` (and `php-version` if you must).
+1. Get a copy as in **Get a copy** above.
+2. Run `bash tools/share/init.sh your_name` so the add-on is not still called `core_extension`.
 3. Put your code in `src/main`.
 4. Put checks in `src/tests/test.php`.
 5. Keep at least one `const SOMETHING = '...';` in `src/main/functions.php` so the load test has something to read.
