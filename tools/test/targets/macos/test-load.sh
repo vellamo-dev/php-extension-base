@@ -1,15 +1,24 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-CONF="$ROOT/project-php-mac.conf"
-YML="$ROOT/project.yml"
-SRC="$ROOT/src/main/functions.php"
-OUT="$ROOT/target/build/targets/macos"
+PATH_SCR_TLD="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_TLD
+CONF="$PATH_SCR_TLD/../../../../project-php-mac.conf"
+YML="$PATH_SCR_TLD/../../../../project.yml"
+SRC="$PATH_SCR_TLD/../../../../src/main/functions.php"
+OUT="$PATH_SCR_TLD/../../../../target/build/targets/macos"
 
-. "$CONF"
-cd "$ROOT"
+[ -f "$CONF" ] || {
+    echo "missing $CONF — run tools/share/php-mac.sh first" >&2
+    exit 1
+}
+source "$PATH_SCR_TLD/../../../../project-php-mac.conf"
+[ -n "${PHP:-}" ] && [ -x "$PHP" ] || {
+    echo "$CONF has no usable PHP (got: ${PHP:-})" >&2
+    echo "Re-run: tools/share/php-mac.sh" >&2
+    exit 1
+}
+cd "$PATH_SCR_TLD/../../../.."
 
 NAME="$(awk '/^name:/{print $2; exit}' "$YML")"
 [ -n "$NAME" ] || NAME=core_extension

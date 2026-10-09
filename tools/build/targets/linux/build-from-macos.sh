@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-YML="$ROOT/project.yml"
-OUT="$ROOT/target/build/targets/linux"
-PHPX_BUILD="$ROOT/target/tpc/phpx-linux"
+PATH_SCR_BFM="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_BFM
+YML="$PATH_SCR_BFM/../../../../project.yml"
+OUT="$PATH_SCR_BFM/../../../../target/build/targets/linux"
+PHPX_BUILD="$PATH_SCR_BFM/../../../../target/tpc/phpx-linux"
 
 if ! command -v container >/dev/null 2>&1; then
     echo "Apple container CLI is missing."
@@ -38,17 +38,17 @@ if image_exists; then
 else
     echo "Image missing: $IMAGE"
     echo "Building image..."
-    sh "$HERE/build-image-from-macos.sh"
+    bash "$PATH_SCR_BFM/build-image-from-macos.sh"
 fi
 
-mkdir -p "$OUT" "$PHPX_BUILD" "$ROOT/vendor"
-rm -f "$OUT/${NAME}.so" "$ROOT/${NAME}.so"
+mkdir -p "$OUT" "$PHPX_BUILD" "$PATH_SCR_BFM/../../../../vendor"
+rm -f "$OUT/${NAME}.so" "$PATH_SCR_BFM/../../../../${NAME}.so"
 
 container system start >/dev/null 2>&1 || true
 
 set +e
 container run --rm --arch amd64 \
-    --volume "$ROOT:/src" \
+    --volume "$PATH_SCR_BFM/../../../..:/src" \
     --workdir /src \
     "$IMAGE" \
     sh -lc "
@@ -83,7 +83,7 @@ if [ -f /src/${NAME}.so ]; then
 fi
 [ -f /src/target/build/targets/linux/${NAME}.so ] || { echo 'linux .so was not produced' >&2; exit 1; }
 
-sh /src/tools/build/targets/linux/bundle-so-from-macos.sh /src/target/build/targets/linux
+bash /src/tools/build/targets/linux/bundle-so-from-macos.sh /src/target/build/targets/linux
 ls -l /src/target/build/targets/linux
 "
 status=$?

@@ -1,15 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-CONF="$ROOT/project-php-mac.conf"
-LIBS="$HERE/libs.conf"
+PATH_SCR_BDL="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_BDL
+CONF="$PATH_SCR_BDL/../../../../project-php-mac.conf"
+LIBS="$PATH_SCR_BDL/libs.conf"
 OUT="${1:-}"
 
 [ -n "$OUT" ] && [ -d "$OUT" ] || { echo "usage: bundle-dylibs.sh <out-dir>" >&2; exit 1; }
 [ -f "$CONF" ] || { echo "missing $CONF" >&2; exit 1; }
-. "$CONF"
+source "$PATH_SCR_BDL/../../../../project-php-mac.conf"
 [ -f "$LIBS" ] || { echo "missing $LIBS" >&2; exit 1; }
 
 search_lib() {

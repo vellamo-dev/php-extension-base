@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-YML="$ROOT/project.yml"
+PATH_SCR_BIM="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_BIM
+YML="$PATH_SCR_BIM/../../../../project.yml"
 
 if ! command -v container >/dev/null 2>&1; then
     echo "Apple container CLI is missing."
@@ -30,7 +30,7 @@ container builder start >/dev/null 2>&1 || true
 container build --arch amd64 \
     --build-arg "PHP_VERSION=${PHP_VERSION}" \
     -t "$IMAGE" \
-    -f "$HERE/Containerfile" \
-    "$HERE"
+    -f "$PATH_SCR_BIM/Containerfile" \
+    "$PATH_SCR_BIM"
 
 echo "Linux image: Success ($IMAGE)"

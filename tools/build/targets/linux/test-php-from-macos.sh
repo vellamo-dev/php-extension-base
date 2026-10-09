@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-YML="$ROOT/project.yml"
-TEST="$ROOT/src/tests/test.php"
-OUT="$ROOT/target/build/targets/linux"
+PATH_SCR_TPM="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_TPM
+YML="$PATH_SCR_TPM/../../../../project.yml"
+TEST="$PATH_SCR_TPM/../../../../src/tests/test.php"
+OUT="$PATH_SCR_TPM/../../../../target/build/targets/linux"
 
 if ! command -v container >/dev/null 2>&1; then
     echo "Apple container CLI is missing."
@@ -56,7 +56,7 @@ container system start >/dev/null 2>&1 || true
 
 set +e
 container run --rm --arch amd64 \
-    --volume "$ROOT:/src" \
+    --volume "$PATH_SCR_TPM/../../../..:/src" \
     --workdir /src \
     "$IMAGE" \
     sh -lc "

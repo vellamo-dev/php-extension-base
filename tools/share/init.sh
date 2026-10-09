@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
-YML="$ROOT/project.yml"
+PATH_SCR_INI="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_INI
+YML="$PATH_SCR_INI/../../project.yml"
 
-cd "$ROOT"
+cd "$PATH_SCR_INI/../.."
 
 if [ "${1:-}" != "" ]; then
     NAME=$1
@@ -39,7 +40,7 @@ tmp="$YML.tmp.$$"
 sed "s/^name:.*/name: $NAME/" "$YML" > "$tmp"
 mv "$tmp" "$YML"
 
-bash "$ROOT/tools/share/fix-permissions.sh"
+bash "$PATH_SCR_INI/../../tools/share/fix-permissions.sh"
 
 echo "Name in project.yml: $NAME"
 echo "PHP will load it as: typephp_$NAME"

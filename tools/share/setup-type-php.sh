@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
-CONF="$ROOT/project-php-mac.conf"
-YML="$ROOT/project.yml"
-COMPOSER_JSON="$ROOT/composer.json"
+PATH_SCR_STP="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_STP
+CONF="$PATH_SCR_STP/../../project-php-mac.conf"
+YML="$PATH_SCR_STP/../../project.yml"
+COMPOSER_JSON="$PATH_SCR_STP/../../composer.json"
 
 need_cmd() {
     command -v "$1" >/dev/null 2>&1
@@ -31,8 +32,7 @@ offer_brew() {
     echo "missing $CONF — run tools/share/php-mac.sh first" >&2
     exit 1
 }
-# shellcheck disable=SC1090
-. "$CONF"
+source "$PATH_SCR_STP/../../project-php-mac.conf"
 
 [ -n "${PHP:-}" ] && [ -x "$PHP" ] || {
     echo "PHP in $CONF is not executable: ${PHP:-}" >&2
@@ -104,16 +104,16 @@ EOF
 fi
 
 echo "composer install with $PHP ($PHP_FULL)"
-"$PHP" "$(command -v composer)" install --working-dir="$ROOT" --no-interaction --no-progress
+"$PHP" "$(command -v composer)" install --working-dir="$PATH_SCR_STP/../.." --no-interaction --no-progress
 
-TPC="$ROOT/vendor/bin/tpc.php"
+TPC="$PATH_SCR_STP/../../vendor/bin/tpc.php"
 [ -f "$TPC" ] || {
     echo "tpc missing after composer install: $TPC" >&2
     exit 1
 }
 
-PHPX_HOME="${PHPX_HOME:-$ROOT/vendor/swoole/phpx}"
-PHPX_BUILD="$ROOT/target/tpc/phpx"
+PHPX_HOME="${PHPX_HOME:-$PATH_SCR_STP/../../vendor/swoole/phpx}"
+PHPX_BUILD="$PATH_SCR_STP/../../target/tpc/phpx"
 [ -d "$PHPX_HOME" ] || {
     echo "swoole/phpx not installed at $PHPX_HOME" >&2
     exit 1

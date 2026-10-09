@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
-CONF="$ROOT/project-php-mac.conf"
-YML="$ROOT/project.yml"
+PATH_SCR_PMA="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_PMA
+CONF="$PATH_SCR_PMA/../../project-php-mac.conf"
+YML="$PATH_SCR_PMA/../../project.yml"
 
 ok_major() {
     case "$1" in

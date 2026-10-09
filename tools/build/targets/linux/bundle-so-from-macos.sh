@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
-HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-ROOT="$(CDPATH= cd -- "$HERE/../../../.." && pwd)"
-LIBS="$HERE/libs.conf"
-OUT="${1:-$ROOT/target/build/targets/linux}"
-YML="$ROOT/project.yml"
+PATH_SCR_BSM="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_BSM
+LIBS="$PATH_SCR_BSM/libs.conf"
+OUT="${1:-$PATH_SCR_BSM/../../../../target/build/targets/linux}"
+YML="$PATH_SCR_BSM/../../../../project.yml"
 
 [ -d "$OUT" ] || { echo "usage: bundle-so.sh <out-dir>" >&2; exit 1; }
 [ -f "$LIBS" ] || { echo "missing $LIBS" >&2; exit 1; }
@@ -15,7 +15,7 @@ NAME="$(awk '/^name:/{print $2; exit}' "$YML")"
 SO="$OUT/${NAME}.so"
 [ -f "$SO" ] || { echo "missing $SO" >&2; exit 1; }
 
-PHPX_LIB="${PHPX_HOME:-$ROOT/vendor/swoole/phpx}/lib"
+PHPX_LIB="${PHPX_HOME:-$PATH_SCR_BSM/../../../../vendor/swoole/phpx}/lib"
 
 search_lib() {
     _name=$1

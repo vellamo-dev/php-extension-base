@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
-exec "$ROOT/tools/share/setup-type-php.sh" --rebuild-phpx
+PATH_SCR_RBP="$(CDPATH='' cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PATH_SCR_RBP
+exec "$PATH_SCR_RBP/../../tools/share/setup-type-php.sh" --rebuild-phpx
