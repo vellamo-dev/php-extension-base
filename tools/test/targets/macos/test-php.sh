@@ -24,6 +24,32 @@ if [ ! -f "$SO" ]; then
     exit 1
 fi
 
+# Detect a stale build: if the extension carries rpaths that do not exist here
+# (built on another machine or with a different PHP), fail with a clear hint.
+if command -v otool >/dev/null 2>&1; then
+    RPS="$OUT/.rpaths.$$"
+    otool -l "$SO" 2>/dev/null \
+        | sed -n 's/^[[:space:]]*path //p' \
+        | sed 's/[[:space:]]*(offset [0-9][0-9]*)$//' > "$RPS" || true
+    stale=0
+    while IFS= read -r p; do
+        case "$p" in
+            ""|@*) continue ;;
+            /*) [ -d "$p" ] || { echo "  stale rpath: $p"; stale=1; } ;;
+        esac
+    done < "$RPS"
+    rm -f "$RPS"
+    if [ "$stale" -eq 1 ]; then
+        echo "Result: Failed"
+        echo "This extension references build paths that do not exist on this machine."
+        echo "It was likely built on another machine or with a different PHP version."
+        echo "Rebuild and bundle it:"
+        echo "  tools/build/targets/macos/build.sh"
+        echo "  tools/build/targets/macos/bundle-dylibs.sh target/build/targets/macos"
+        exit 1
+    fi
+fi
+
 if [ ! -f "$TEST" ]; then
     echo "Result: Failed"
     echo "missing src/tests/test.php"
@@ -39,6 +65,11 @@ set -e
 if [ "$ready" -ne 0 ]; then
     echo "Result: Failed"
     echo "module $MOD not loaded"
+    if grep -q 'Library not loaded' "$ERR" 2>/dev/null; then
+        echo "Hint: a dependency could not be found — rebuild and bundle the extension:"
+        echo "  tools/build/targets/macos/build.sh"
+        echo "  tools/build/targets/macos/bundle-dylibs.sh target/build/targets/macos"
+    fi
     cat "$ERR"
     exit 1
 fi
