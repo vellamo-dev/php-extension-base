@@ -21,5 +21,7 @@ rm -f "$ROOT/${NAME}.so" "$SO"
 [ -f "$ROOT/${NAME}.so" ] || { echo "tpc did not write $ROOT/${NAME}.so" >&2; exit 1; }
 mv -f "$ROOT/${NAME}.so" "$SO"
 
+sh "$HERE/bundle-dylibs.sh" "$OUT"
+
 echo "built: $SO"
 ls -l "$SO"
