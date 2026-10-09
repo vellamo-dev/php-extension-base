@@ -18,7 +18,7 @@ php_meta() {
     _ver="$("$_bin" -r 'echo PHP_VERSION;' 2>/dev/null)" || return 1
     _maj="$("$_bin" -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)" || return 1
     _cfg="$(dirname -- "$_bin")/php-config"
-    [ -x "$_cfg" ] || _cfg="$(command -v php-config 2>/dev/null || true)"
+    [ -x "$_cfg" ] || _cfg=""
     _pre=""
     [ -n "$_cfg" ] && [ -x "$_cfg" ] && _pre="$("$_cfg" --prefix 2>/dev/null || true)"
     printf '%s\t%s\t%s\t%s\t%s\n' "$_bin" "$_ver" "$_maj" "${_cfg:-}" "${_pre:-}"
@@ -27,7 +27,11 @@ php_meta() {
 add_bin() {
     _b=$1
     [ -e "$_b" ] || return 0
-    _b="$(cd -- "$(dirname -- "$_b")" && pwd)/$(basename -- "$_b")"
+    if command -v realpath >/dev/null 2>&1; then
+        _b="$(realpath "$_b" 2>/dev/null)" || return 0
+    else
+        _b="$(cd -- "$(dirname -- "$_b")" && pwd -P)/$(basename -- "$_b")"
+    fi
     case "$_b" in
         */php) ;;
         *) return 0 ;;

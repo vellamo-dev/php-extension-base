@@ -1,7 +1,14 @@
-#!/bin/bash
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
 REPO_TAR="https://github.com/vellamo-dev/php-extension-base/archive/refs/heads/main.tar.gz"
+
+for c in curl tar; do
+    command -v "$c" >/dev/null 2>&1 || {
+        echo "Missing required tool: $c" >&2
+        exit 1
+    }
+done
 
 if [ "${1:-}" != "" ]; then
     NAME=$1

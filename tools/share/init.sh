@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
@@ -27,6 +27,11 @@ esac
 
 if [ ! -f "$YML" ]; then
     echo "missing project.yml" >&2
+    exit 1
+fi
+
+if ! grep -q '^name:' "$YML"; then
+    echo "missing 'name:' line in $YML" >&2
     exit 1
 fi
 

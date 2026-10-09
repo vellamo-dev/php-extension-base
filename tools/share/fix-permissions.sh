@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # run in the project dir:
 # bash tools/share/fix-permissions.sh
 set -eu

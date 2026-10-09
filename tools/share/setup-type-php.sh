@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
@@ -125,13 +125,29 @@ else
     PHPX_LIB="$PHPX_HOME/lib/libphpx.so"
 fi
 
+PHPX_STAMP="$PHPX_HOME/lib/.phpx-php-prefix"
+if [ -f "$PHPX_STAMP" ]; then
+    PHX_BUILT_PREFIX="$(cat "$PHPX_STAMP" 2>/dev/null || true)"
+else
+    PHX_BUILT_PREFIX=""
+fi
+
 rebuild=0
 [ "${1:-}" = "--rebuild-phpx" ] && rebuild=1
 [ -f "$PHPX_LIB" ] || rebuild=1
+[ "$PHX_BUILT_PREFIX" = "$PHP_PREFIX" ] || rebuild=1
+# Rebuild if the PHPX sources are newer than the built library (e.g. after composer update).
+if [ "$rebuild" -eq 0 ] && [ -f "$PHPX_LIB" ]; then
+    if find "$PHPX_HOME" \( -name '*.cc' -o -name '*.c' -o -name '*.h' -o -name 'CMakeLists.txt' \) \
+        -type f -newer "$PHPX_LIB" -print 2>/dev/null | grep -q .; then
+        rebuild=1
+    fi
+fi
 
 if [ "$rebuild" -eq 1 ]; then
     echo "building PHPX against $PHP_PREFIX"
-    mkdir -p "$PHPX_BUILD" "$PHPX_HOME/lib"
+    mkdir -p "$PHPX_HOME/lib"
+    rm -rf "$PHPX_BUILD"
     rm -f "$PHPX_HOME/lib/"*.a \
         "$PHPX_HOME/lib/libphpx.dylib" \
         "$PHPX_HOME/lib/libphpx.so"
@@ -139,6 +155,7 @@ if [ "$rebuild" -eq 1 ]; then
         -DCMAKE_BUILD_TYPE=Release \
         -Dphp_dir="$PHP_PREFIX"
     cmake --build "$PHPX_BUILD" -j 4
+    printf '%s\n' "$PHP_PREFIX" > "$PHPX_STAMP"
 fi
 
 [ -f "$PHPX_LIB" ] || {
